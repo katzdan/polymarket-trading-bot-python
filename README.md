@@ -55,22 +55,6 @@ https://github.com/user-attachments/assets/b038aa3b-e42b-4f72-ac5d-a130cdb56a9f
 
 
 ---
-## Telegram Trial Version Bot
-You can also test the bot directly on Telegram.
-
- <img width="457" height="273" alt="image" src="https://github.com/user-attachments/assets/8f3035da-67d2-4182-9e66-8959e0bb7574" />
-
-
-
-
-https://github.com/user-attachments/assets/3fc915aa-4534-4b9c-b69c-2becdaa1ee4e
-
-
-
-
-https://t.me/benjamin_polymarket_trading_bot
-
----
 
 ## **🚀 Key Features**
 
