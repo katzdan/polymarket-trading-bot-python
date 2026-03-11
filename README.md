@@ -24,6 +24,10 @@ A high-performance, automated trading system for [Polymarket](https://polymarket
 
 # 1. Polymarket Endcycle Sniper bot (Introduction)
 
+Polymarket Endcycle Sniper Bot is an automated trading system designed to monitor short-duration prediction markets and execute high-probability trades near the end of each 5-minute epoch. It connects to the orderbook in real time, triggers buys when prices exceed a configured threshold (e.g., 0.95), manages risk with optional exits or hedging, and redeems winning positions automatically after market resolution. 🚀📈
+<img width="1098" height="728" alt="polymarket-endcycle-sniper-bot" src="https://github.com/user-attachments/assets/f2f83308-c9cd-4c71-9cf6-10fcbe8e1e63" />
+
+
 ## Recording Video
 
 https://github.com/user-attachments/assets/b038aa3b-e42b-4f72-ac5d-a130cdb56a9f
@@ -58,6 +62,10 @@ An open-source bot that automatically copies trades from top Polymarket traders 
 
 Whether you're new to prediction markets or you want to scale your copy-trading across multiple wallets, this bot is built to be **simple to run**, **transparent**, and **under your control**.
 
+<img width="1100" height="726" alt="polymarket-copy-trading-bot" src="https://github.com/user-attachments/assets/82243a0b-f4ec-47f0-b7cd-326e0b0e2a27" />
+
+## Recording Video
+
 https://github.com/user-attachments/assets/1bf1babc-8aa6-4be0-b1ec-4e193f52b965
 
 
@@ -68,8 +76,12 @@ Instead, it captures spread by selling both YES and NO outcome tokens at prices 
 The strategy focuses on market making, not directional trading.
 <img width="1098" height="727" alt="image" src="https://github.com/user-attachments/assets/69f7c1d7-20c6-4b30-928b-5df382795c8a" />
 
+## Recording Video
 
 https://github.com/user-attachments/assets/7ba03ed4-f00d-4564-bf78-67c5159bb5c3
+
+---
+## Result Screenshot
 
 <img width="1803" height="861" alt="polymarket-trading-ladder-bot-pnl" src="https://github.com/user-attachments/assets/6b9c55c5-f822-46ff-b956-ec9939736653" />
 
