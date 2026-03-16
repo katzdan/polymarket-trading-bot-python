@@ -68,9 +68,20 @@ Whether you're new to prediction markets or you want to scale your copy-trading 
 
 https://github.com/user-attachments/assets/1bf1babc-8aa6-4be0-b1ec-4e193f52b965
 
+# 3. Polymarket Arbitrage Bot (Dual-side)
+This Polymarket trading bot explores an automated volatility and probability arbitrage bot designed to identify pricing inefficiencies in prediction markets. Instead of predicting outcomes, the system exploits mispriced probabilities, market imbalances, and short-term volatility using quantitative models and automation. By combining high-frequency execution with strong risk management and hedging, the bot aims to capture small statistical edges and compound them over large trade volumes. 🚀
 
 
-# 3. Polymarket Arbitrage (Ladder Trading) Bot (Introduction)
+<img width="1071" height="709" alt="image" src="https://github.com/user-attachments/assets/c40f12cc-a205-4091-a0f6-bdd443580943" />
+
+
+## Result Screenshot
+
+<img width="1011" height="355" alt="image" src="https://github.com/user-attachments/assets/19a2cdd8-8702-4bd4-b71f-eeee40fead6d" />
+
+
+
+# 4. Polymarket Arbitrage (Ladder Trading) Bot (Introduction)
 This bot does not speculate on market direction.
 Instead, it captures spread by selling both YES and NO outcome tokens at prices whose combined value exceeds $1.
 The strategy focuses on market making, not directional trading.
@@ -307,7 +318,7 @@ polymarket-trading-bot-5m-v4/
 ---
 
 
-# 3. Polymarket Arbitrage (Ladder Trading) Bot (5m / 15m / 1h / 4h / 1d crypto Up/Down markets) (Explain)
+# 4. Polymarket Arbitrage (Ladder Trading) Bot (5m / 15m / 1h / 4h / 1d crypto Up/Down markets) (Explain)
 
 ## Overview
 
