@@ -1,6 +1,6 @@
-# Polymarket Bot | Polymarket Trading Bot | Polymarket Trading Bot - 5 min market | Polymarket Arbitrage Bot | Polymarket Copy trading Bot
+# Polymarket Arbitrage Bot | Polymarket Trading Bot | Polymarket Trading Bot - 5 min market | Polymarket Bot | Polymarket Copy trading Bot
 
-Polymarket Bot, Polymarket Trading Bot, Polymarket 5min market Trading Bot, Polymarket Automatic Trading Bot
+Polymarket arbitrage Bot, Polymarket Trading Bot, Polymarket 5min market Trading Bot, Polymarket Automatic Trading Bot
 
 A high-performance, automated trading system for [Polymarket](https://polymarket.com) prediction markets. Built in Python with real-time WebSocket streaming, gasless L2 execution, and a risk-management framework suited to short-term and high-frequency environments.
 
@@ -77,7 +77,7 @@ Whether you're new to prediction markets or you want to scale your copy-trading 
 ## Recording Video
 
 https://github.com/user-attachments/assets/1bf1babc-8aa6-4be0-b1ec-4e193f52b965
-# 3. Polymarket Arbitrage Bot (101 cents) : (Introduction)
+# 3. Polymarket Arbitrage Bot (101 cents Sniper) : (Introduction)
 
 Polymarket Arbitrage 101 Bot is a professional Polymarket liquidity maker bot designed for short-interval (e.g., 5-minute) binary markets, automating the full cycle of splitting USDC into YES/NO tokens, placing balanced limit orders, and dynamically managing positions in real time. It targets a consistent edge by structuring trades so each YES/NO pair aims to return a combined value of 1.01 (101 cents) per cycle, while applying adaptive adjustments and risk controls as market conditions evolve. Built for multi-chain compatibility and continuous 24/7 operation, it supports live, dry-run, and paper trading modes for both production use and safe strategy testing.
 <img width="1124" height="742" alt="image" src="https://github.com/user-attachments/assets/73737f09-ba30-4955-85a2-057e84b0ef3d" />
