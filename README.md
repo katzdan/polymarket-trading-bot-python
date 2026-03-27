@@ -577,12 +577,7 @@ sum = 1.01
 ```
 
 If `min_pair_sum = 1.03`, the bot increases both prices proportionally.
-### If running continuously
-| Markets       | Cycles per hour | Hourly Profit |
-| ------------- | --------------- | ------------- |
-| 1 market (5m) | 12              | ~$36          |
-| 2 markets     | 12              | ~$72          |
-| 4 markets     | 12              | ~$144         |
+
 
 
 
