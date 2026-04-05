@@ -78,19 +78,33 @@ npm run help
 ### 4. Pilot Capital Protection Filters
 
 **What it does:**
-- Implements Dusting, Liquidity, and Slippage filters.
-- **Dusting**: Skips leader trades < $1,000.
-- **Liquidity**: Skips markets with < $100,000 24h volume.
-- **Slippage**: Skips trades if the price deviates > 0.5% from the leader's price.
+- Implements Dusting, Liquidity, Slippage, and Risk/Reward filters.
+- **Dusting**: Skips leader trades < $5.00 (configurable).
+- **Liquidity**: Skips markets with low volume.
+- **Slippage**: Real-time order book check to ensure we don't buy > 0.5% away from leader.
+- **Risk/Reward**: `MAX_COPY_PRICE` (default 0.92) prevents "picking up pennies in front of a steamroller."
 
 **Benefits:**
-- Protects capital for small pilot accounts.
+- Protects capital for small pilot accounts ($1,000+).
 - Ensures high-conviction trades in deep liquidity.
 
 **Documentation:**
 - [🛡️ Pilot Trading Filters (Capital Protection)](./PILOT_FILTERS.md)
 
-### 5. Post-Install Welcome Message
+### 5. Advanced Batch Backtester (v10)
+
+**What it does:**
+- Large-scale simulation of 760+ unique traders.
+- Calculates **Annual ROI** and **Average Holding Time**.
+- Generates grouped HTML reports with verification links.
+
+### 6. Dry-Run Profitability Analysis
+
+**What it does:**
+- Real-time hypothetical PnL calculation based on your actual `.env` filters.
+- Analyzes the most recent 50 trades of your configured leader.
+
+### 7. Post-Install Welcome Message
 
 **What it does:**
 

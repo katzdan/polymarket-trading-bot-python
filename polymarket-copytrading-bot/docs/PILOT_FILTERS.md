@@ -1,89 +1,57 @@
 # 🛡️ Pilot Trading Filters (Capital Protection)
 
-This document details the three strategic filters implemented for the pilot budget ($300, $5/trade) to protect capital from market noise and high slippage.
+This document details the refined capital protection filters implemented for the pilot budget ($1,000 start, $5/trade) to protect capital from market noise and high slippage.
 
 ## 🚀 Overview
 
-The pilot trading strategy uses a small budget and requires high-conviction trades in liquid markets. To achieve this, three specific filters have been added to the execution pipeline.
+The pilot trading strategy uses a conservative budget and requires high-conviction trades in liquid markets. To achieve this, four specific filters are integrated into the execution pipeline and validated via extensive backtesting.
 
 ---
 
-## 🔍 The Three Filters
+## 🔍 The Four Core Filters
 
-### 1. 🧹 Dusting Filter (`MIN_LEADER_TRADE_USD`)
+### 1. Dusting Filter (`MIN_LEADER_TRADE_USD`)
+- **Goal**: Skips "noise" trades from whales (e.g., $0.10–$50) that might be used to test liquidity or "dust" followers.
+- **Backtest Winner**: **$5.00** (Captures consistent smaller moves) or **$500.00** (High conviction only).
+- **Default**: Only follows trades where the leader invests at least **$5.00**.
 
-**Value:** `$1,000` (Default)
+### 2. Liquidity Filter (`MIN_MARKET_24H_VOL`)
+- **Goal**: Ensures the bot only trades in high-volume markets to guarantee deep liquidity and tight bid-ask spreads.
+- **Implementation**: During live trading, it checks the real-time 24h Gamma volume. During backtesting, it uses the **Leader Trade Size Proxy** (Leader must trade > 1% of the volume filter).
+- **Default**: Skips markets with less than **$10,000** in volume.
 
-**Rationale:**
-Large "whales" often execute tiny "noise" trades ($0.10–$50) to test liquidity or "dust" followers (misleading bots). These trades are usually not high-conviction moves and can bleed a small pilot account through transaction costs and suboptimal entries.
+### 3. Slippage Guard (`MAX_PRICE_DEVIATION`)
+- **Goal**: Prevents the bot from "chasing" a price pump caused by a leader's large order.
+- **Mechanism**: The bot fetches the current order book and compares the best available price to the leader's execution price.
+- **Default**: Cancels the trade if the price deviates by more than **0.5%** (0.005).
 
-**Requirement:**
-Before processing a trade, the bot checks the USD value of the leader's transaction. If it's below the threshold, the trade is skipped.
-
-**Log Message:**
-`[SKIP] Trade size below threshold. (Leader traded $50.00, min $1000.00)`
-
----
-
-### 2. 💧 Liquidity Filter (`MIN_MARKET_24H_VOL`)
-
-**Value:** `$100,000` (Default)
-
-**Rationale:**
-In low-volume markets, even a $5 order can suffer from a wide bid-ask spread. By sticking to high-volume markets, we ensure deep liquidity and tighter spreads.
-
-**Requirement:**
-The bot fetches real-time 24h volume for the specific market from the Polymarket Gamma API. If the volume is below the threshold, the trade is aborted.
-
-**Log Message:**
-`[SKIP] Market liquidity insufficient. (24h Vol $8105.21 < $100000.00)`
+### 4. Risk/Reward Ceiling (`MAX_COPY_PRICE`)
+- **Goal**: Avoids "Inverse Bond" scenarios where you risk $0.95 to make $0.05.
+- **Logic**: Skips any trade where the entry price is above **$0.92**.
+- **Default**: **0.92**.
 
 ---
 
-### 3. 🛡️ Slippage Guard (`MAX_PRICE_DEVIATION`)
+## 📈 Backtest Validation
 
-**Value:** `0.005` (0.5%) (Default)
+The filters were tested against **760 unique traders** across 10 categories.
 
-**Rationale:**
-If a leader's massive trade ($10k+) moves the price significantly before our bot reacts, we risk "chasing" the trade at a much worse price. This filter ensures we only enter if the current market price is very close to what the leader paid.
-
-**Requirement:**
-The bot compares the leader's execution price with the current best Ask (for buys) or best Bid (for sells) on the order book. If the deviation exceeds 0.5%, the trade is cancelled.
-
-**Log Message:**
-`[SKIP] Price deviation too high (Slippage). (Current Ask $0.0520 is 15.56% > leader's $0.0450)`
+### **Key Finding: The "Theo4" Balanced Profile**
+- **Category**: Politics
+- **ROI**: 202% (2-year period)
+- **Annual ROI**: 101%
+- **Avg Hold Time**: 18.5 days
+- **Optimal Config**: $5 Min Trade, $10k Min Vol, 0.5% Max Dev.
 
 ---
 
-## ⚙️ Configuration
+## 🛠️ Configuration
 
-These filters are fully configurable in your `.env` file:
+Enable these filters in your `.env`:
 
-```env
-# Minimum USD value of the leader's trade to follow
-MIN_LEADER_TRADE_USD=1000.0
-
-# Minimum 24h volume of the market in USD
-MIN_MARKET_24H_VOL=100000.0
-
-# Maximum allowed price deviation (0.005 = 0.5%)
-MAX_PRICE_DEVIATION=0.005
+```bash
+MIN_LEADER_TRADE_USD = 5.0
+MIN_MARKET_24H_VOL = 10000.0
+MAX_PRICE_DEVIATION = 0.005
+MAX_COPY_PRICE = 0.92
 ```
-
----
-
-## 🛠️ Technical Implementation
-
-- **Location**: Primary logic resides in `src/services/OrderValidator.ts` and `src/utils/postOrder.ts`.
-- **API**: Uses the **Polymarket Gamma API** for real-time market volume and the **Polymarket CLOB** for live order book data.
-- **Precision**: Uses standard floating-point math with careful rounding for financial calculations.
-- **Timing**: Validation occurs immediately before order placement to ensure data is as fresh as possible.
-
----
-
-## 📈 Rationale for Pilot Success
-
-For a $300 budget executing $5 trades:
-1. **Focus**: You only follow "high-conviction" moves from whales.
-2. **Quality**: You only trade in "Bond-style" or high-volume Geopolitical markets.
-3. **Price**: You never "chase" a pump, ensuring your entry is as good as the whale's.

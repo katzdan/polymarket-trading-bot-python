@@ -56,3 +56,5 @@ polymarket-copytrading-bot/global_backtest_report.html
 polymarket-copytrading-bot/top_traders_by_category.json
 
 polymarket-copytrading-bot/.env.tmp
+
+polymarket-copytrading-bot/market_data_cache.json

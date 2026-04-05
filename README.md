@@ -1,4 +1,39 @@
-# Polymarket Arbitrage Bot | Polymarket Trading Bot | Polymarket Trading Bot - 5 min market | Polymarket Bot | Polymarket Copy trading Bot
+# 🤖 Polymarket Advanced Trading Bot Suite
+
+This repository is a **fork** of the original [Gabagool2-2/polymarket-trading-bot-python](https://github.com/Gabagool2-2/polymarket-trading-bot-python). It has been significantly enhanced with professional-grade copy-trading features, capital protection filters, and advanced simulation tools.
+
+## 🚀 Key Additions & Enhancements
+
+This fork introduces several critical features for safe and profitable automated trading:
+
+### 1. 🛡️ Capital Protection Filters
+Implemented a multi-stage validation pipeline to protect your capital from market noise and high slippage.
+- **Dusting Filter**: Ignore tiny "noise" trades from whales.
+- **Liquidity Guard**: Ensure deep market depth before entering.
+- **Slippage Guard**: Real-time order book checks to prevent chasing price pumps.
+- **Risk/Reward Ceiling**: Automatically skip trades with poor risk-to-reward ratios.
+- **Detailed Documentation**: [🛡️ Pilot Trading Filters](./polymarket-copytrading-bot/docs/PILOT_FILTERS.md)
+
+### 2. 🧪 Advanced Strategy Simulation (v10)
+A high-performance backtesting engine capable of simulating thousands of filter combinations across 760+ top traders.
+- **Annual ROI Calculation**: Projected returns based on historical performance.
+- **Avg Holding Time**: Understand how long your capital will be exposed.
+- **HTML Reporting**: Rich, sortable reports grouped by category.
+- **Usage**: `cd polymarket-copytrading-bot && npm run multi-backtest`
+- **Detailed Documentation**: [🧪 Simulation Guide](./polymarket-copytrading-bot/docs/SIMULATION_GUIDE.md)
+
+### 3. 📈 Real-Time Profitability Analysis
+A "Dry-Run" tool to calculate hypothetical USD profit for your specific wallet settings using the most recent live trades.
+- **Usage**: `cd polymarket-copytrading-bot && npm run dry-run-profitability`
+
+### 4. 🛠️ Improved User Experience
+- **Interactive Setup**: `npm run setup` guides you through configuration.
+- **Health Checks**: `npm run health-check` diagnostics for your bot.
+- **Refined Documentation**: [✨ All Improvements](./polymarket-copytrading-bot/docs/IMPROVEMENTS.md)
+
+---
+
+# Original Documentation
 
 Polymarket arbitrage Bot, Polymarket Trading Bot, Polymarket 5min market Trading Bot, Polymarket Automatic Trading Bot
 
