@@ -51,10 +51,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-polymarket-copytrading-bot/global_backtest_report.html
+# Generated files
+*.html
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!pyproject.toml
+!uv.lock
 
-polymarket-copytrading-bot/top_traders_by_category.json
-
-polymarket-copytrading-bot/.env.tmp
-
-polymarket-copytrading-bot/market_data_cache.json
+# Specific project files
+.env.tmp

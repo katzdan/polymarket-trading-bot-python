@@ -23,3 +23,15 @@ coverage/
 
 # OS files
 .DS_Store
+
+# Generated reports and data
+*.html
+*.json
+
+# Whitelist essential config files
+!package.json
+!package-lock.json
+!tsconfig.json
+!typedoc.json
+!.prettierrc
+!eslint.config.mjs
