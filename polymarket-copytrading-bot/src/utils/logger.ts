@@ -346,6 +346,7 @@ class Logger {
     }
 
     private static lastWaitLog = 0;
+    private static lastConsoleWaitLog = 0;
     private static spinnerFrames = ['⏳', '⌛', '⏳'];
     private static spinnerIndex = 0;
 
@@ -364,11 +365,14 @@ class Logger {
             ? `${spinner} Waiting for trades from ${traderCount} trader(s)... (${extraInfo})`
             : `${spinner} Waiting for trades from ${traderCount} trader(s)...`;
 
-        if (this.shouldLog(LogLevel.DEBUG)) {
-            process.stdout.write(chalk.dim(`\r[${timestamp}] `) + chalk.cyan(message) + '  ');
+        // 🚀 PRODUCTION OPTIMIZATION: Only log to console/PM2 every 15 minutes to avoid bloat
+        // New trades and errors will still log immediately.
+        if (now - this.lastConsoleWaitLog > 15 * 60 * 1000) {
+            console.log(chalk.dim(`[${timestamp}] `) + chalk.cyan(message));
+            this.lastConsoleWaitLog = now;
         }
 
-        // Only log to file every 10 seconds to avoid bloating logs
+        // Keep the debug file log as is (once every 10s is fine for files)
         if (now - this.lastWaitLog > 10000) {
             this.logger.debug('Waiting for trades', { traderCount, extraInfo, type: 'waiting' });
             this.lastWaitLog = now;

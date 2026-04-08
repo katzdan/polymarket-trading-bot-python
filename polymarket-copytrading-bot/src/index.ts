@@ -9,6 +9,7 @@ import { getClobClients } from './services/createClobClient';
 import tradeExecutor, { stopTradeExecutor } from './services/tradeExecutor';
 import tradeMonitor, { stopTradeMonitor } from './services/tradeMonitor';
 import Logger from './utils/logger';
+import Notifier from './utils/notifier';
 import { performHealthCheck, logHealthCheck } from './utils/healthCheck';
 
 const USER_ADDRESSES = ENV.USER_ADDRESSES;
@@ -93,6 +94,7 @@ export const main = async () => {
 
         await connectDB();
         Logger.startup(USER_ADDRESSES, PROXY_WALLET);
+        Notifier.notifyStartup(USER_ADDRESSES, PROXY_WALLET);
 
         // Perform initial health check
         Logger.info('Performing initial health check...');

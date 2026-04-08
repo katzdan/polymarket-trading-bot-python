@@ -9,6 +9,7 @@ import { getUserActivityModel } from '../models/userHistory';
 import { getCopyExecutionModel } from '../models/copyExecution';
 import postOrder from '../utils/postOrder';
 import Logger from '../utils/logger';
+import Notifier from '../utils/notifier';
 import { ErrorHandler } from '../utils/errorHandler';
 import { ENV } from '../config/env';
 import { validateTrade, ValidationResult } from './OrderValidator';
@@ -62,6 +63,7 @@ const executeTrade = async (
 
         if (!validation.isValid) {
             Logger.error(`Trade validation failed: ${validation.reason}`);
+            Notifier.notifyFiltered(validation.reason, trade.slug || trade.title || trade.asset, userAddress, trade.usdcSize);
             if (isMultiWallet && followerWallet) {
                 await CopyExecution.create({
                     traderAddress: userAddress,

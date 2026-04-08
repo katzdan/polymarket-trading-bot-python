@@ -467,4 +467,9 @@ export const ENV = {
      * We want to avoid "picking up pennies in front of a steamroller" and stay in the 2–3 week conviction trades.
      */
     MAX_COPY_PRICE: parseFloat(process.env.MAX_COPY_PRICE || '0.92'),
+
+    // Notification settings
+    TELEGRAM_TOKEN: process.env.TELEGRAM_TOKEN,
+    TELEGRAM_CHAT_ID: process.env.TELEGRAM_CHAT_ID,
+    DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
 };
