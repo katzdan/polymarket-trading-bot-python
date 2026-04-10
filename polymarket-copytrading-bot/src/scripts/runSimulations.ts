@@ -18,6 +18,7 @@ interface SimulationConfig {
     historyDays: number;
     multiplier: number;
     minOrderSize: number;
+    copySize?: number; // NEW: Fixed copy size
     maxTrades?: number;
     tag?: string;
 }
@@ -58,6 +59,7 @@ function runSimulation(config: SimulationConfig): Promise<void> {
             SIM_MAX_TRADES: String(config.maxTrades || 5000),
             SIM_RESULT_TAG: config.tag || '',
             TRADE_MULTIPLIER: String(config.multiplier),
+            SIM_COPY_SIZE: config.copySize ? String(config.copySize) : '',
         };
 
         console.log(colors.cyan('\n🚀 Starting simulation...'));
@@ -235,11 +237,12 @@ async function main() {
             const trader = args[1];
             const days = parseInt(args[2] || '30');
             const multiplier = parseFloat(args[3] || '1.0');
+            const copySize = args[4] ? parseFloat(args[4]) : undefined;
 
             if (!trader) {
                 console.log(colors.red('Error: Trader address required for custom mode'));
                 console.log(
-                    colors.yellow('Usage: npm run sim custom <trader_address> [days] [multiplier]')
+                    colors.yellow('Usage: npm run sim custom <trader_address> [days] [multiplier] [copySize]')
                 );
                 return;
             }
@@ -248,6 +251,7 @@ async function main() {
                 traderAddress: trader.toLowerCase(),
                 historyDays: days,
                 multiplier,
+                copySize,
                 minOrderSize: 1.0,
                 tag: 'custom',
             });
@@ -285,10 +289,11 @@ function printHelp() {
     );
 
     console.log('Custom mode:');
-    console.log(colors.yellow('  npm run sim custom <trader> [days] [multiplier]\n'));
+    console.log(colors.yellow('  npm run sim custom <trader> [days] [multiplier] [copySize]\n'));
 
     console.log('Examples:');
     console.log(colors.gray('  npm run sim custom 0x7c3d... 30 2.0'));
+    console.log(colors.gray('  npm run sim custom 0x7c3d... 30 1.0 25'));
     console.log(colors.gray('  npm run sim standard\n'));
 }
 

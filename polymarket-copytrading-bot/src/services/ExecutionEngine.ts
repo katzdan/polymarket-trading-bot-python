@@ -166,7 +166,7 @@ const executeAggregatedTrades = async (
     for (const agg of aggregatedTrades) {
         try {
             Logger.header(`📊 AGGREGATED TRADE (${agg.trades.length} trades combined)`);
-            Logger.info(`Market: ${agg.slug || agg.asset}`);
+            Logger.info(`Market: ${agg.slug || agg.asset || 'Unknown'}`);
             Logger.info(`Side: ${agg.side}`);
             Logger.info(`Total volume: $${agg.totalUsdcSize.toFixed(2)}`);
             Logger.info(`Average price: $${agg.averagePrice.toFixed(4)}`);

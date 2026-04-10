@@ -94,6 +94,10 @@ const COPY_PERCENTAGE = (() => {
     const value = raw ? Number(raw) : 10.0;
     return Number.isFinite(value) && value > 0 ? value : 10.0;
 })(); // % of trader's order size to copy (default: 10%)
+const COPY_SIZE = (() => {
+    const raw = process.env.SIM_COPY_SIZE;
+    return raw ? Number(raw) : null;
+})(); // NEW: Fixed copy size in USD
 const MIN_ORDER_SIZE = (() => {
     const raw = process.env.SIM_MIN_ORDER_USD;
     const value = raw ? Number(raw) : 1.0;
@@ -270,9 +274,16 @@ async function simulateCopyTrading(trades: Trade[]): Promise<SimulationResult> {
     const positions = new Map<string, SimulatedPosition>();
 
     for (const trade of trades) {
-        // NEW LOGIC: Copy fixed percentage of trader's order size
-        const baseOrderSize = trade.usdcSize * (COPY_PERCENTAGE / 100);
-        let orderSize = baseOrderSize * MULTIPLIER;
+        let orderSize = 0;
+        
+        if (COPY_SIZE) {
+            // FIXED: Use fixed USD amount if COPY_SIZE is set
+            orderSize = COPY_SIZE * MULTIPLIER;
+        } else {
+            // NEW LOGIC: Copy fixed percentage of trader's order size
+            const baseOrderSize = trade.usdcSize * (COPY_PERCENTAGE / 100);
+            orderSize = baseOrderSize * MULTIPLIER;
+        }
 
         // Check if order meets minimum
         if (orderSize < MIN_ORDER_SIZE) {
@@ -323,7 +334,7 @@ async function simulateCopyTrading(trades: Trade[]): Promise<SimulationResult> {
                 price: trade.price,
                 size: sharesReceived,
                 usdcSize: orderSize,
-                traderPercent: (trade.usdcSize / 100000) * 100, // Placeholder for display
+                traderPercent: COPY_SIZE ? 0 : (trade.usdcSize / 100000) * 100, // Placeholder for display
                 yourSize: orderSize,
             });
 
@@ -422,8 +433,8 @@ async function simulateCopyTrading(trades: Trade[]): Promise<SimulationResult> {
 
     return {
         id: `sim_${TRADER_ADDRESS.slice(0, 8)}_${Date.now()}`,
-        name: `FIXED_${TRADER_ADDRESS.slice(0, 6)}_${HISTORY_DAYS}d_copy${COPY_PERCENTAGE}pct`,
-        logic: 'fixed_percentage',
+        name: `FIXED_${TRADER_ADDRESS.slice(0, 6)}_${HISTORY_DAYS}d_${COPY_SIZE ? 'size$' + COPY_SIZE : 'copy' + COPY_PERCENTAGE + 'pct'}`,
+        logic: COPY_SIZE ? 'fixed_size' : 'fixed_percentage',
         timestamp: Date.now(),
         traderAddress: TRADER_ADDRESS,
         startingCapital: STARTING_CAPITAL,
