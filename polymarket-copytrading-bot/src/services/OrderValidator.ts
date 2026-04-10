@@ -19,6 +19,18 @@ import Logger from '../utils/logger';
 const defaultProxyWallet = () => ENV.PROXY_WALLET;
 
 /**
+ * Safely parse a number to BigNumber with fixed decimals, truncating any extra precision
+ * to prevent ethers.utils.parseUnits "underflow" errors.
+ */
+const safeParseUnits = (value: string | number, decimals: number = 6): BigNumber => {
+    const s = typeof value === 'number' ? value.toFixed(10) : value;
+    const [integer, fractional] = s.split('.');
+    if (!fractional) return ethers.utils.parseUnits(integer, decimals);
+    const truncatedFractional = fractional.slice(0, decimals);
+    return ethers.utils.parseUnits(`${integer}.${truncatedFractional}`, decimals);
+};
+
+/**
  * Interface for trade validation results.
  * @interface ValidationResult
  */
@@ -82,16 +94,12 @@ const validateTrade = async (
             /**
              * 2b. Wash Trade & Self-Fill Detection (Market Dominance Check)
              * Rationale: If a single trade makes up a vast majority of recent activity, it may be a wash trade.
-             * Requirement: Verify if the leader's trade represents more than 20% of the total market volume
-             * for that specific token_id in the last 60 seconds.
-             * Note: Since 60s real-time volume is not easily available via Gamma API, we use a high-sensitivity 
-             * check against 24h volume (e.g. if one trade is > 2% of 24h volume, it's highly dominant).
              */
             const marketDominance = trade.usdcSize / vol24h;
-            if (marketDominance > 0.02) { // 2% of 24h volume is a very large single trade
+            if (marketDominance > 0.05) { // 5% of 24h volume is a very large single trade
                 return {
                     isValid: false,
-                    reason: `[SKIP] Potential Wash Trade: Leader volume > 20% of recent market activity.`,
+                    reason: `[SKIP] Potential Wash Trade: Leader volume > 5% of 24h market activity.`,
                 };
             }
         }
@@ -103,13 +111,13 @@ const validateTrade = async (
             const orderBook = await clobClient.getOrderBook(trade.asset);
             
             // Use 6 decimals for price comparison consistency (Polymarket standard for USDC/price)
-            const leaderPriceBN = ethers.utils.parseUnits(trade.price.toString(), 6);
-            const maxCopyPriceBN = ethers.utils.parseUnits(ENV.MAX_COPY_PRICE.toString(), 6);
+            const leaderPriceBN = safeParseUnits(trade.price, 6);
+            const maxCopyPriceBN = safeParseUnits(ENV.MAX_COPY_PRICE, 6);
 
             if (trade.side === 'BUY') {
                 if (orderBook.asks && orderBook.asks.length > 0) {
                     const bestAskPrice = Math.min(...orderBook.asks.map(a => parseFloat(a.price)));
-                    const bestAskBN = ethers.utils.parseUnits(bestAskPrice.toString(), 6);
+                    const bestAskBN = safeParseUnits(bestAskPrice, 6);
                     
                     /**
                      * 3a. MAX_COPY_PRICE (The "Inverse Bond" Ceiling)
@@ -127,8 +135,8 @@ const validateTrade = async (
                      * BigNumber calculation: (bestAsk - leaderPrice) / leaderPrice > threshold
                      * Equivalent to: bestAsk > leaderPrice * (1 + threshold)
                      */
-                    const thresholdMultiplierBN = ethers.utils.parseUnits((1 + ENV.MAX_PRICE_DEVIATION).toString(), 6);
-                    const maxAllowedPriceBN = leaderPriceBN.mul(thresholdMultiplierBN).div(ethers.utils.parseUnits('1', 6));
+                    const thresholdMultiplierBN = safeParseUnits(1 + ENV.MAX_PRICE_DEVIATION, 6);
+                    const maxAllowedPriceBN = leaderPriceBN.mul(thresholdMultiplierBN).div(safeParseUnits(1, 6));
                     
                     if (bestAskBN.gt(maxAllowedPriceBN)) {
                         const deviation = (bestAskPrice - trade.price) / trade.price;
@@ -141,15 +149,15 @@ const validateTrade = async (
             } else if (trade.side === 'SELL') {
                 if (orderBook.bids && orderBook.bids.length > 0) {
                     const bestBidPrice = Math.max(...orderBook.bids.map(b => parseFloat(b.price)));
-                    const bestBidBN = ethers.utils.parseUnits(bestBidPrice.toString(), 6);
+                    const bestBidBN = safeParseUnits(bestBidPrice, 6);
                     
                     /**
                      * MAX_PRICE_DEVIATION (Slippage Guard) for SELL
                      * Equivalent to: bestBid < leaderPrice * (1 - threshold)
                      */
-                    const thresholdMultiplierBN = ethers.utils.parseUnits((1 - ENV.MAX_PRICE_DEVIATION).toString(), 6);
-                    const minAllowedPriceBN = leaderPriceBN.mul(thresholdMultiplierBN).div(ethers.utils.parseUnits('1', 6));
-                    
+                    const thresholdMultiplierBN = safeParseUnits(1 - ENV.MAX_PRICE_DEVIATION, 6);
+                    const minAllowedPriceBN = leaderPriceBN.mul(thresholdMultiplierBN).div(safeParseUnits(1, 6));
+
                     if (bestBidBN.lt(minAllowedPriceBN)) {
                         const deviation = (trade.price - bestBidPrice) / trade.price;
                         return {

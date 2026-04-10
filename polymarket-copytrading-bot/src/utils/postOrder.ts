@@ -23,6 +23,18 @@ const COPY_PERCENTAGE = ENV.COPY_PERCENTAGE;
 const MIN_ORDER_SIZE_USD = 1.0; // Minimum order size in USD for BUY orders
 const MIN_ORDER_SIZE_TOKENS = 1.0; // Minimum order size in tokens for SELL/MERGE orders
 
+/**
+ * Safely parse a number to BigNumber with fixed decimals, truncating any extra precision
+ * to prevent ethers.utils.parseUnits "underflow" errors.
+ */
+const safeParseUnits = (value: string | number, decimals: number = 6): BigNumber => {
+    const s = typeof value === 'number' ? value.toFixed(10) : value;
+    const [integer, fractional] = s.split('.');
+    if (!fractional) return ethers.utils.parseUnits(integer, decimals);
+    const truncatedFractional = fractional.slice(0, decimals);
+    return ethers.utils.parseUnits(`${integer}.${truncatedFractional}`, decimals);
+};
+
 const extractOrderError = (response: unknown): string | undefined => {
     if (!response) {
         return undefined;
@@ -237,10 +249,10 @@ const postOrder = async (
              * higher than what the leader paid, do not place the order.
              */
             const bestAskPrice = parseFloat(minPriceAsk.price);
-            const bestAskBN = ethers.utils.parseUnits(bestAskPrice.toString(), 6);
-            const leaderPriceBN = ethers.utils.parseUnits(trade.price.toString(), 6);
-            const thresholdMultiplierBN = ethers.utils.parseUnits((1 + ENV.MAX_PRICE_DEVIATION).toString(), 6);
-            const maxAllowedPriceBN = leaderPriceBN.mul(thresholdMultiplierBN).div(ethers.utils.parseUnits('1', 6));
+            const bestAskBN = safeParseUnits(bestAskPrice, 6);
+            const leaderPriceBN = safeParseUnits(trade.price, 6);
+            const thresholdMultiplierBN = safeParseUnits(1 + ENV.MAX_PRICE_DEVIATION, 6);
+            const maxAllowedPriceBN = leaderPriceBN.mul(thresholdMultiplierBN).div(safeParseUnits(1, 6));
 
             if (bestAskBN.gt(maxAllowedPriceBN)) {
                 const buyDeviation = (bestAskPrice - trade.price) / trade.price;
@@ -461,10 +473,10 @@ const postOrder = async (
              * exit price, ensuring we don't dump into a drying order book.
              */
             const bestBidPrice = parseFloat(maxPriceBid.price);
-            const bestBidBN = ethers.utils.parseUnits(bestBidPrice.toString(), 6);
-            const leaderPriceBN = ethers.utils.parseUnits(trade.price.toString(), 6);
-            const thresholdMultiplierBN = ethers.utils.parseUnits((1 - ENV.MAX_PRICE_DEVIATION).toString(), 6);
-            const minAllowedPriceBN = leaderPriceBN.mul(thresholdMultiplierBN).div(ethers.utils.parseUnits('1', 6));
+            const bestBidBN = safeParseUnits(bestBidPrice, 6);
+            const leaderPriceBN = safeParseUnits(trade.price, 6);
+            const thresholdMultiplierBN = safeParseUnits(1 - ENV.MAX_PRICE_DEVIATION, 6);
+            const minAllowedPriceBN = leaderPriceBN.mul(thresholdMultiplierBN).div(safeParseUnits(1, 6));
 
             if (bestBidBN.lt(minAllowedPriceBN)) {
                 const sellDeviation = (trade.price - bestBidPrice) / trade.price;
